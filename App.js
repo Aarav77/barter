@@ -1,21 +1,20 @@
-
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import WelcomeScreen from './screens/welcomeScreen';
+import { createAppContainer, createSwitchNavigator,} from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+
+import WelcomeScreen from './screens/WelcomeScreen';
+import { AppTabNavigator } from './components/AppTabNavigator'
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <WelcomeScreen></WelcomeScreen>
-    </View>
+    <AppContainer/>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+const switchNavigator = createSwitchNavigator({
+  WelcomeScreen:{screen: WelcomeScreen},
+  BottomTab:{screen: AppTabNavigator}
+})
+
+const AppContainer =  createAppContainer(switchNavigator);
