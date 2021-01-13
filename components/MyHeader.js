@@ -1,31 +1,41 @@
 import React, { Component} from 'react';
 import { Header,Icon,Badge } from 'react-native-elements';
 import { View, Text, StyeSheet ,Alert} from 'react-native';
-
-
-
-const BellIconWithBadge=(props)=>{
-  return(
-    <View>
-      <Icon name='bell' type='font-awesome' color='#696969' size={25}
-        onPress={() =>props.navigation.navigate('Notification')}/>
-       <Badge
-        value="1"
-       containerStyle={{ position: 'absolute', top: -4, right: -4 }}/>
-    </View>
-  )
+import db from '../config';
+export default class MyHeader extends Component{
+  constructor(props){
+    super(props);
+    this.state={value:""}
+  }
+  getNumberOfNotifications(){
+    db.collection('all_notifications').where('notification_status', '==', 'unread').onSnapshot((snapshot)=>{
+      var unreadnotifications=snapshot.docs.map((doc)=>doc.data());
+      this.setState({value:unreadnotifications.length})
+    })
+  }
+  componentDidMount(){
+    this.getNumberOfNotifications();
+  }
+  BellIconWithBadge=()=>{
+    return(
+      <View>
+        <Icon name='bell' type='font-awesome' color='#696969' size={25}
+          onPress={() =>this.props.navigation.navigate('Notification')}/>
+         <Badge
+          value={this.state.value}
+         containerStyle={{ position: 'absolute', top: -4, right: -4 }}/>
+      </View>
+    )
+  }
+  render(){
+    return (
+      <Header
+        leftComponent={<Icon name='bars' type='font-awesome' color='#696969'  onPress={() => props.navigation.toggleDrawer()}/>}
+        centerComponent={{ text: this.props.title, style: { color: '#90A5A9', fontSize:20,fontWeight:"bold", } }}
+        rightComponent={<this.BellIconWithBadge {...this.props}/>}
+        backgroundColor = "#eaf8fe"
+      />
+    );
+  }  
 }
 
-
-const MyHeader = props => {
-  return (
-    <Header
-      leftComponent={<Icon name='bars' type='font-awesome' color='#696969'  onPress={() => props.navigation.toggleDrawer()}/>}
-      centerComponent={{ text: props.title, style: { color: '#90A5A9', fontSize:20,fontWeight:"bold", } }}
-      rightComponent={<BellIconWithBadge {...props}/>}
-      backgroundColor = "#eaf8fe"
-    />
-  );
-};
-
-export default MyHeader;
